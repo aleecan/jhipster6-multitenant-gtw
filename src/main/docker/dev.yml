@@ -1,0 +1,22 @@
+version: '2'
+services:
+  gtw-mysql:
+    extends:
+      file: mysql.yml
+      service: gtw-mysql
+  jhipster-registry:
+    extends:
+      file: jhipster-registry.yml
+      service: jhipster-registry
+    environment:
+      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_TYPE=native
+      - SPRING_CLOUD_CONFIG_SERVER_COMPOSITE_0_SEARCH_LOCATIONS=file:./central-config/docker-config/
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/auth/realms/jhipster
+  keycloak:
+    extends:
+      file: keycloak.yml
+      service: keycloak
+  srv-mysql:
+    extends:
+      file: ../../../../srv/src/main/docker/mysql.yml
+      service: srv-mysql
