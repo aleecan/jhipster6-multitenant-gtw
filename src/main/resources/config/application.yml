@@ -198,19 +198,4 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-application:
-  issuer-base-uri: http://localhost:9080/auth/realms/
-  multitenancy:
-    tenants:
-      - name: jhipster
-        default: true
-        url: jdbc:h2:mem:gtw;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-        username:
-        password:
-        hikari:
-          auto-commit: false
-          data-source-properties:
-            cachePrepStmts: true
-            prepStmtCacheSize: 250
-            prepStmtCacheSqlLimit: 2048
-            useServerPrepStmts: true
+# application:
