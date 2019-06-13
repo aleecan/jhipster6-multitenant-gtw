@@ -146,4 +146,20 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  issuer-base-uri: http://localhost:9080/auth/realms/
+  multitenancy:
+    tenants:
+      - name: jhipster
+        default: true
+        #url: jdbc:mysql://localhost:3306/gtw?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+        url: jdbc:mysql://localhost:3306/gtw?useUnicode=true&characterEncoding=utf8
+        username: gtw
+        password: gtw
+        hikari:
+          auto-commit: false
+          data-source-properties:
+            cachePrepStmts: true
+            prepStmtCacheSize: 250
+            prepStmtCacheSqlLimit: 2048
+            useServerPrepStmts: true
