@@ -39,7 +39,7 @@ public class TenantFilter extends GenericFilterBean {
             }
 
             // si pas dasns le token, voir si param de la request
-            if (tenant != null){
+            if (tenant == null || tenant.isEmpty()){
                 String[] realms = request.getParameterValues("realm");
                 if (realms != null && realms.length > 0){
                     tenant = realms[0];
@@ -47,7 +47,7 @@ public class TenantFilter extends GenericFilterBean {
             }
 
             // set du tenant dans la context
-            if (tenant != null){
+            if (tenant != null && !tenant.isEmpty()){
                TenantContext.setCurrentTenant(tenant);
             } else {
                TenantContext.clear();
