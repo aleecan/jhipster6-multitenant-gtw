@@ -1,5 +1,6 @@
 package be.civadis.jh6.gtw.config;
 
+import be.civadis.jh6.gtw.multitenancy.TenantFilter;
 import be.civadis.jh6.gtw.security.*;
 
 import org.springframework.context.annotation.Bean;
@@ -83,6 +84,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
             .oauth2Login()
         .and()
+            .addFilterAfter(new TenantFilter(), CorsFilter.class)
             .oauth2ResourceServer().jwt();
         // @formatter:on
     }
