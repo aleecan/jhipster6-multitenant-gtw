@@ -19,41 +19,40 @@ public class TenantFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         // Attention, dans le cas du gateway, on doit gérer deux cas:
-        // login avec tenant en param (pas de token)
         // traitement avec tenant dans le token
-
-         //extraire le tenantId du param tenant de l'url (si url : login?tenant=tenantId)
-         String[] realms = request.getParameterValues("realm");
+        // login avec tenant en param (pas de token)
 
          try {
-             if (realms != null && realms.length > 0){
-                 // tenant en param
-                 TenantContext.setCurrentTenant(realms[0]);
 
-             } else {
+            // extraire le token
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            String authHeader = httpRequest.getHeader("Authorization");
+            String token = null;
+            if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ") && authHeader.length() > 7){
+                token = authHeader.substring(7);
+            }
 
-                 // extraire le token
-                 HttpServletRequest httpRequest = (HttpServletRequest) request;
-                 String authHeader = httpRequest.getHeader("Authorization");
-                 String token = null;
-                 if (authHeader != null && authHeader.toLowerCase().startsWith("bearer ") && authHeader.length() > 7){
-                     token = authHeader.substring(7);
-                 }
+            // extraire le tenant du token
+            String tenant = null;
+            if (token != null && !token.isEmpty()){
+               tenant = TokenDecoder.getInstance().getTenant(token);
+            }
 
-                 //extraire le tenant du token
-                 String tenant = null;
-                 if (token != null && !token.isEmpty()){
-                    tenant = TokenDecoder.getInstance().getTenant(token);
-                 }
+            // si pas dasns le token, voir si param de la request
+            if (tenant != null){
+                String[] realms = request.getParameterValues("realm");
+                if (realms != null && realms.length > 0){
+                    tenant = realms[0];
+                } 
+            }
 
-                 if (tenant != null){
-                    TenantContext.setCurrentTenant(tenant);
-                 } else {
-                    TenantContext.clear();
-                 }
-
-             }
-
+            // set du tenant dans la context
+            if (tenant != null){
+               TenantContext.setCurrentTenant(tenant);
+            } else {
+               TenantContext.clear();
+            }
+             
              chain.doFilter(request, response);
  
          } finally {
