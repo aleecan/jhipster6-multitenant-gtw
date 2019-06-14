@@ -2,11 +2,16 @@ package be.civadis.jh6.gtw.multitenancy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
@@ -24,6 +29,11 @@ public class MultiTenantConfig {
     private final Logger log = LoggerFactory.getLogger(MultiTenantConfig.class);
 
     private ApplicationProperties applicationProperties;
+
+    @Value("${spring.security.oauth2.client.registration.oidc.client-id}")
+    private String clientId;
+    @Value("${spring.security.oauth2.client.registration.oidc.client-secret}")
+    private String clientSecret;
 
     public MultiTenantConfig(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
@@ -52,6 +62,20 @@ public class MultiTenantConfig {
 
         return jwtDecoder;
 
+    }
+
+    @Primary
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public ClientRegistrationRepository clientRegistrations() {
+        ClientRegistration clientRegistration = ClientRegistrations
+                .fromOidcIssuerLocation(this.applicationProperties.getIssuerBaseUri() + "jhipster")
+                .clientId(this.clientId)
+                .clientSecret(this.clientSecret)
+                .clientName("oidc_tenant")
+                .build();
+        //this.clientRegistrationRepository.findByRegistrationId("oidc").
+        return new InMemoryClientRegistrationRepository(clientRegistration);
     }
 
 }

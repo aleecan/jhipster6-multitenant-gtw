@@ -12,12 +12,25 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import be.civadis.jh6.gtw.security.oauth2.AudienceValidator;
+
+import org.springframework.security.oauth2.client.endpoint.NimbusAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrations;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.jwt.*;
 import be.civadis.jh6.gtw.security.oauth2.AuthorizationHeaderFilter;
 import be.civadis.jh6.gtw.security.oauth2.AuthorizationHeaderUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -43,9 +56,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private String issuerUri;
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
+    private ClientRegistrationRepository clientRegistrationRepository;
+    
+    public SecurityConfiguration(CorsFilter corsFilter, SecurityProblemSupport problemSupport,
+        ClientRegistrationRepository clientRegistrationRepository
+    ) {
         this.corsFilter = corsFilter;
         this.problemSupport = problemSupport;
+        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
     @Override
@@ -83,11 +101,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
         .and()
             .oauth2Login()
+            //.authenticationConverter(converter)
+            // .authenticationManager(manager)
+            // .authorizedClientRepository(authorizedClients)
+                .clientRegistrationRepository(this.clientRegistrationRepository)
+                //    .authorizationEndpoint()
+                //    .baseUri("ttp://localhost:9080/auth/realms/{realm}")
+                //    .authorizationRequestRepository(this.authorizationRequestRepository).and()
         .and()
             .addFilterAfter(new TenantFilter(), CorsFilter.class)
             .oauth2ResourceServer().jwt();
         // @formatter:on
     }
+
+
 
     /**
      * Map authorities from "groups" or "roles" claim in ID Token.
