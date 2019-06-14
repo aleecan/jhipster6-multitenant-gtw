@@ -29,14 +29,16 @@ public class MultiTenantConfig {
     private final Logger log = LoggerFactory.getLogger(MultiTenantConfig.class);
 
     private ApplicationProperties applicationProperties;
+    private TenantUtils tenantUtils;
 
     @Value("${spring.security.oauth2.client.registration.oidc.client-id}")
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.oidc.client-secret}")
     private String clientSecret;
 
-    public MultiTenantConfig(ApplicationProperties applicationProperties) {
+    public MultiTenantConfig(ApplicationProperties applicationProperties, TenantUtils tenantUtils) {
         this.applicationProperties = applicationProperties;
+        this.tenantUtils = tenantUtils;
     }
 
     @Primary
@@ -69,7 +71,7 @@ public class MultiTenantConfig {
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public ClientRegistrationRepository clientRegistrations() {
         ClientRegistration clientRegistration = ClientRegistrations
-                .fromOidcIssuerLocation(this.applicationProperties.getIssuerBaseUri() + "jhipster")
+                .fromOidcIssuerLocation(this.applicationProperties.getIssuerBaseUri() + tenantUtils.getTenant())
                 .clientId(this.clientId)
                 .clientSecret(this.clientSecret)
                 .clientName("oidc_tenant")
