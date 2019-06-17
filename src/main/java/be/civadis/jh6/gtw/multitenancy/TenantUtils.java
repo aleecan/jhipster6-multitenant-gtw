@@ -25,7 +25,7 @@ public class TenantUtils {
     }    
 
     public String getTenant(){
-        return Optional.ofNullable(TenantContext.getCurrentTenant()).orElse("toto");
+        return Optional.ofNullable(TenantContext.getCurrentTenant()).orElse("");
     }
 
 

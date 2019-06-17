@@ -67,8 +67,7 @@ public class MultiTenantConfig {
 
     }
 
-    
-    @Conditional(MultiSchemasCondition.class)
+    @Conditional(TenantExistsCondition.class)
     @Primary
     @Bean
     // on ne peut pas créer dans un singleton car tenant dépend de la request
