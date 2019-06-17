@@ -165,3 +165,16 @@ application:
             prepStmtCacheSize: 250
             prepStmtCacheSqlLimit: 2048
             useServerPrepStmts: true
+      - name: jhipster2
+        default: false
+        #url: jdbc:mysql://localhost:3306/gtw?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+        url: jdbc:mysql://localhost:3316/gtw?useUnicode=true&characterEncoding=utf8
+        username: gtw
+        password: gtw
+        hikari:
+          auto-commit: false
+          data-source-properties:
+            cachePrepStmts: true
+            prepStmtCacheSize: 250
+            prepStmtCacheSqlLimit: 2048
+            useServerPrepStmts: true

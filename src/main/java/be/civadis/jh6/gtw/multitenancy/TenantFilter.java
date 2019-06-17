@@ -50,12 +50,9 @@ public class TenantFilter extends GenericFilterBean {
             logger.warn("********************************************************");
             logger.warn("********************************************************");
             logger.warn("********************************************************");
-            logger.warn("********************************************************");
             if (tenant != null && !tenant.isEmpty()){
-                logger.warn("Setting current tenant : " + tenant);
                 TenantContext.setCurrentTenant(tenant);
             } else {
-                logger.warn("Clear current tenant");
                 TenantContext.clear();
             }
              
