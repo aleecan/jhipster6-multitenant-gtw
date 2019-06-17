@@ -9,6 +9,8 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import be.civadis.jh6.gtw.multitenancy.TokenDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +38,9 @@ public class LogoutResource {
                                     @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
 
         ClientRegistrationRepository registrations = this.applicationContext.getBean(ClientRegistrationRepository.class);
-        ClientRegistration registration = registrations.findByRegistrationId("oidc");
-
+        String tenant = TokenDecoder.getInstance().getTenant(idToken.getTokenValue());
+        ClientRegistration registration = registrations.findByRegistrationId(tenant);
+        
         String logoutUrl = registration.getProviderDetails()
             .getConfigurationMetadata().get("end_session_endpoint").toString();
 
