@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -31,9 +32,9 @@ public class MultiTenantConfig {
     private ApplicationProperties applicationProperties;
     private TenantUtils tenantUtils;
 
-    @Value("${spring.security.oauth2.client.registration.oidc.client-id}")
+    @Value("${spring.security.oauth2.client.registration.oidc.client-id:#{null}}")
     private String clientId;
-    @Value("${spring.security.oauth2.client.registration.oidc.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.oidc.client-secret:#{null}}")
     private String clientSecret;
 
     public MultiTenantConfig(ApplicationProperties applicationProperties, TenantUtils tenantUtils) {
@@ -66,8 +67,13 @@ public class MultiTenantConfig {
 
     }
 
+    
+    @Conditional(MultiSchemasCondition.class)
     @Primary
     @Bean
+    // prob avec le scope !
+    // on ne peut pas créer dans un singleton car tenant dépend de la request
+    // MAIS le bean est injecté dans ResourceLogout en tant que singleton donc pas trouvé si scope request
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public ClientRegistrationRepository clientRegistrations() {
         ClientRegistration clientRegistration = ClientRegistrations

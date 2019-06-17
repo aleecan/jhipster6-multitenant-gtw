@@ -1,5 +1,6 @@
 package be.civadis.jh6.gtw.web.rest;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -17,10 +18,10 @@ import java.util.Map;
 */
 @RestController
 public class LogoutResource {
-    private ClientRegistration registration;
+    private ApplicationContext applicationContext;
 
-    public LogoutResource(ClientRegistrationRepository registrations) {
-        this.registration = registrations.findByRegistrationId("oidc");
+    public LogoutResource(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -33,7 +34,11 @@ public class LogoutResource {
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request,
                                     @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
-        String logoutUrl = this.registration.getProviderDetails()
+
+        ClientRegistrationRepository registrations = this.applicationContext.getBean(ClientRegistrationRepository.class);
+        ClientRegistration registration = registrations.findByRegistrationId("oidc");
+
+        String logoutUrl = registration.getProviderDetails()
             .getConfigurationMetadata().get("end_session_endpoint").toString();
 
         Map<String, String> logoutDetails = new HashMap<>();
