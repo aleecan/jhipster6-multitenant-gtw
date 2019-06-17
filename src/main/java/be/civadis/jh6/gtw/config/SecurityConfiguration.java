@@ -109,7 +109,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //    .baseUri("ttp://localhost:9080/auth/realms/{realm}")
                 //    .authorizationRequestRepository(this.authorizationRequestRepository).and()
         .and()
-            .addFilterAfter(new TenantFilter(), CorsFilter.class)
+            .addFilterBefore(new TenantFilter(), CorsFilter.class)
             .oauth2ResourceServer().jwt();
         // @formatter:on
     }

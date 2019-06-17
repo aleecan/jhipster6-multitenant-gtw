@@ -71,16 +71,14 @@ public class MultiTenantConfig {
     @Conditional(MultiSchemasCondition.class)
     @Primary
     @Bean
-    // prob avec le scope !
     // on ne peut pas créer dans un singleton car tenant dépend de la request
-    // MAIS le bean est injecté dans ResourceLogout en tant que singleton donc pas trouvé si scope request
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public ClientRegistrationRepository clientRegistrations() {
         ClientRegistration clientRegistration = ClientRegistrations
                 .fromOidcIssuerLocation(this.applicationProperties.getIssuerBaseUri() + tenantUtils.getTenant())
                 .clientId(this.clientId)
                 .clientSecret(this.clientSecret)
-                .clientName("oidc_tenant")
+                .registrationId("oidc")
                 .build();
         //this.clientRegistrationRepository.findByRegistrationId("oidc").
         return new InMemoryClientRegistrationRepository(clientRegistration);
