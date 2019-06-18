@@ -38,12 +38,21 @@ public class TenantFilter extends GenericFilterBean {
                tenant = TokenDecoder.getInstance().getTenant(token);
             }
 
-            // si pas dasns le token, voir si param de la request
+            // si pas dans le token, voir si param de la request
             if (tenant == null || tenant.isEmpty()){
                 String[] realms = request.getParameterValues("realm");
                 if (realms != null && realms.length > 0){
                     tenant = realms[0];
-                } 
+                } else {
+                    // cas de oauth2/authorization/{realm}
+                    String uri = httpRequest.getRequestURI();
+                    if (uri.contains("oauth2/authorization/")){
+                        String part = uri.substring(uri.indexOf("oauth2/authorization/") + 21);
+                        if (part != null && !part.isEmpty()){
+                            tenant = part;
+                        }
+                    }
+                }
             }
 
             // set du tenant dans la context
