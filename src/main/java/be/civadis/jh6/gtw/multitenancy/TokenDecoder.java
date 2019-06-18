@@ -112,8 +112,12 @@ public class TokenDecoder {
 
     public String getTenant(Claims claims){
         logger.warn("Issuer : " + claims.getIssuer());
-        int idx = claims.getIssuer().lastIndexOf(TenantUtils.TENANT_PATH_PREFIX);
-        return claims.getIssuer().substring(idx + TenantUtils.TENANT_PATH_PREFIX.length() + 1);
+        if (claims != null && claims.getIssuer() != null){
+            int idx = claims.getIssuer().lastIndexOf(TenantUtils.TENANT_PATH_PREFIX);
+            return claims.getIssuer().substring(idx + TenantUtils.TENANT_PATH_PREFIX.length() + 1);
+        } else {
+            return null;
+        }
     }
 
     public String getTenant(String token){

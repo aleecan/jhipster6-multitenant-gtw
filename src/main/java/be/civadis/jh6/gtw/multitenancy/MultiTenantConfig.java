@@ -32,10 +32,6 @@ public class MultiTenantConfig {
     private ApplicationProperties applicationProperties;
     private TenantUtils tenantUtils;
 
-    //@Value("${spring.security.oauth2.client.registration.oidc.client-id:#{null}}")
-    //private String clientId;
-    //@Value("${spring.security.oauth2.client.registration.oidc.client-secret:#{null}}")
-    //private String clientSecret;
     @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri:#{null}}")
     private String issuerUri;
 
@@ -64,33 +60,5 @@ public class MultiTenantConfig {
         return jwtDecoder;
 
     }
-/*
-    @Conditional(MultiSchemasCondition.class)
-    @Primary
-    @Bean
-    // on ne peut pas créer dans un singleton car tenant dépend de la request
-    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public ClientRegistrationRepository clientRegistrations() {
-        
-        String issuer = null;
-        if (tenantUtils.getTenant() != null && !tenantUtils.getTenant().isEmpty()){
-            issuer = this.applicationProperties.getIssuerBaseUri() + tenantUtils.getTenant();
-        } else {
-            issuer = this.issuerUri;
-        }
 
-        log.warn(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
-        log.warn("Creating ClientRegistration with issuer :" + issuer + " (tenant : " + tenantUtils.getTenant() + ")");
-        log.warn(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
-
-        ClientRegistration clientRegistration = ClientRegistrations
-                .fromOidcIssuerLocation(issuer)
-                .clientId(this.clientId)
-                .clientSecret(this.clientSecret)
-                .registrationId("oidc")
-                .build();
-        //this.clientRegistrationRepository.findByRegistrationId("oidc").
-        return new InMemoryClientRegistrationRepository(clientRegistration);
-    }
-*/
 }

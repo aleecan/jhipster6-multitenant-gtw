@@ -37,9 +37,11 @@ public class LogoutResource {
     public ResponseEntity<?> logout(HttpServletRequest request,
                                     @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
 
+       
         ClientRegistrationRepository registrations = this.applicationContext.getBean(ClientRegistrationRepository.class);
         String tenant = TokenDecoder.getInstance().getTenant(idToken.getTokenValue());
-        ClientRegistration registration = registrations.findByRegistrationId(tenant);
+       
+        ClientRegistration registration = registrations.findByRegistrationId((tenant != null) ? tenant : "oidc");
         
         String logoutUrl = registration.getProviderDetails()
             .getConfigurationMetadata().get("end_session_endpoint").toString();
