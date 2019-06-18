@@ -46,26 +46,24 @@ public class TenantFilter extends GenericFilterBean {
                 } else {
                     // cas de oauth2/authorization/{realm}
                     String uri = httpRequest.getRequestURI();
-                    if (uri.contains("oauth2/authorization/")){
-                        String part = uri.substring(uri.indexOf("oauth2/authorization/") + 21);
-                        if (part != null && !part.isEmpty()){
-                            tenant = part;
+                    String searchPart = "oauth2/authorization/";
+                    if (uri.contains(searchPart)){
+                        String endPart = uri.substring(uri.indexOf(searchPart) + searchPart.length());
+                        if (endPart != null && !endPart.isEmpty()){
+                            tenant = endPart;
                         }
                     }
                 }
             }
 
             // set du tenant dans la context
-            logger.warn("********************************************************");
-            logger.warn("********************************************************");
-            logger.warn("********************************************************");
             if (tenant != null && !tenant.isEmpty()){
                 TenantContext.setCurrentTenant(tenant);
             } else {
                 TenantContext.clear();
             }
              
-             chain.doFilter(request, response);
+            chain.doFilter(request, response);
  
          } finally {
              TenantContext.clear();

@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 public class CivadisApplicationProperties {
 
     private String fileDbUpdate;
-    private String issuerBaseUri;
+    //private String issuerBaseUri;
     private Multitenancy multitenancy = new Multitenancy();
 
     public String getFileDbUpdate() {
         return fileDbUpdate;
     }
-
+/*
     public String getIssuerBaseUri() {
         return issuerBaseUri;
     }
@@ -21,7 +21,7 @@ public class CivadisApplicationProperties {
     public void setIssuerBaseUri(String issuerBaseUri) {
         this.issuerBaseUri = issuerBaseUri;
     }
-
+*/
     public void setFileDbUpdate(String fileDbUpdate) {
         this.fileDbUpdate = fileDbUpdate;
     }

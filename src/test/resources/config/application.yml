@@ -125,7 +125,7 @@ jhipster:
 # ===================================================================
 
 application:
-  issuer-base-uri: http://localhost:9080/auth/realms/
+  #issuer-base-uri: http://localhost:9080/auth/realms/
   multitenancy:
     tenants:
       - name: jhipster
