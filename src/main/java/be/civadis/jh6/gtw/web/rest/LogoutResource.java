@@ -1,5 +1,6 @@
 package be.civadis.jh6.gtw.web.rest;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -7,6 +8,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import be.civadis.jh6.gtw.multitenancy.TokenDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -17,10 +20,10 @@ import java.util.Map;
 */
 @RestController
 public class LogoutResource {
-    private ClientRegistration registration;
+    private ApplicationContext applicationContext;
 
-    public LogoutResource(ClientRegistrationRepository registrations) {
-        this.registration = registrations.findByRegistrationId("oidc");
+    public LogoutResource(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -33,7 +36,12 @@ public class LogoutResource {
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request,
                                     @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
-        String logoutUrl = this.registration.getProviderDetails()
+
+        ClientRegistrationRepository registrations = this.applicationContext.getBean(ClientRegistrationRepository.class);
+        String tenant = TokenDecoder.getInstance().getTenant(idToken.getTokenValue());
+        ClientRegistration registration = registrations.findByRegistrationId(tenant);
+        
+        String logoutUrl = registration.getProviderDetails()
             .getConfigurationMetadata().get("end_session_endpoint").toString();
 
         Map<String, String> logoutDetails = new HashMap<>();
