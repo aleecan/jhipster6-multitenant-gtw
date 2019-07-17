@@ -18,5 +18,5 @@ services:
       service: keycloak
   srv-mysql:
     extends:
-      file: ../../../../srv/src/main/docker/mysql.yml
+      file: ../../../../jhipster6-multitenant-srv/src/main/docker/mysql.yml
       service: srv-mysql
